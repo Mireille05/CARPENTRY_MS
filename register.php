@@ -2,39 +2,39 @@
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $servername = "localhost";
-    $username = "root"; // Update if your MySQL username is different
-    $password = ""; // Update if your MySQL password is different
-    $dbname = "CMS"; // Ensure this is the correct database name
+    $host = 'localhost';
+    $dbname = 'postgres';  // Or your actual DB name
+    $user = 'postgres';    // Your PostgreSQL username
+    $pass = 'kubem';       // Your PostgreSQL password
 
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    try {
+        $conn = new PDO("pgsql:host=$host;dbname=$dbname", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (:email, :password)");
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $hashed_password);
+
+        if ($stmt->execute()) {
+            // Success: redirect to login
+            header("Location: login.html?success=Registration successful! Please log in.");
+            exit();
+        } else {
+            echo "Registration failed. Please try again.";
+        }
+
+    } catch (PDOException $e) {
+        echo "Error: " . $e->getMessage();
     }
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-    // Insert user data
-    $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $email, $hashed_password);
-
-    if ($stmt->execute()) {
-        // Registration successful, redirect to login page
-        header("Location: login.html?success=Registration successful! Please log in.");
-        exit();
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-
-    $stmt->close();
-    $conn->close();
+    $conn = null;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
