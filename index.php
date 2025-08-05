@@ -20,7 +20,7 @@ if (!isset($_SESSION['user_id'])) {
     <!-- Header Section -->
     <header>
         <div class="container">
-            <img src="images/logo.jfif" alt="Carpentry Management System Logo" class="logo">
+            <img src="logo.jpg" alt="Carpentry Management System Logo" class="logo">
             <div class="header-content">
                 <h1>MasterCraft Woodworks</h1>
                
@@ -81,9 +81,17 @@ if (!isset($_SESSION['user_id'])) {
    
     <footer>
         <div class="container">
-            <p>&copy; 2024 MasterCraft Woodworks. All rights reserved.</p>
+            <p id= "date"></p>
         </div>
     </footer>
+
+    <script>
+        const date = new Date().getFullYear();
+      const el = document.getElementById("date");
+      console.log(el);
+
+      el.textContent = `© ${date} Carpentry Management System. All rights reserved.`;
+    </script>
 </body>
 </html>
 
