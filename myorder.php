@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':total', $total);
 
         if ($stmt->execute()) {
-            echo "<script>alert('Order placed successfully!'); window.location.href = 'index.php';</script>";
+            echo "<script>alert('Order placed successfully!'); window.location.href = 'home.php';</script>";
             exit();
         } else {
             echo "Error: Could not submit order.";
