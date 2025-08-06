@@ -1,22 +1,36 @@
 <?php
-// Database configuration
-$host = 'localhost'; // Your database host
-$dbname = 'CMS'; // Your database name
-$username = 'root'; // Your database username
-$password = ''; // Your database password
+// DB config
+$host = 'localhost';
+$dbname = 'postgres';
+$username = 'postgres';
+$password = 'kubem';
 
-// Create a new PDO instance
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
 
-// Retrieve messages from the database
-$sql = "SELECT * FROM contact_form ORDER BY id DESC"; // Order by ID in descending order
-$stmt = $pdo->prepare($sql);
+// Handle delete if submitted
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete_id'])) {
+    $deleteId = $_POST['delete_id'];
+    $deleteSql = "DELETE FROM contact_form WHERE id = :id";
+    $deleteStmt = $pdo->prepare($deleteSql);
+    $deleteStmt->bindParam(':id', $deleteId, PDO::PARAM_INT);
 
+    try {
+        $deleteStmt->execute();
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+    } catch (PDOException $e) {
+        die("Error deleting message: " . $e->getMessage());
+    }
+}
+
+// Fetch all messages
+$sql = "SELECT * FROM contact_form ORDER BY id DESC";
+$stmt = $pdo->prepare($sql);
 try {
     $stmt->execute();
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -24,6 +38,7 @@ try {
     die("Error retrieving data: " . $e->getMessage());
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -95,20 +110,28 @@ try {
                         <th>Subject</th>
                         <th>Message</th>
                         <th>Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($messages as $message): ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($message['id']); ?></td>
-                            <td><?php echo htmlspecialchars($message['name']); ?></td>
-                            <td><?php echo htmlspecialchars($message['email']); ?></td>
-                            <td><?php echo htmlspecialchars($message['subject']); ?></td>
-                            <td><?php echo nl2br(htmlspecialchars($message['message'])); ?></td>
-                            <td><?php echo htmlspecialchars($message['created_at']); ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
+          <tbody>
+    <?php foreach ($messages as $message): ?>
+        <tr>
+            <td><?php echo htmlspecialchars($message['id']); ?></td>
+            <td><?php echo htmlspecialchars($message['name']); ?></td>
+            <td><?php echo htmlspecialchars($message['email']); ?></td>
+            <td><?php echo htmlspecialchars($message['subject']); ?></td>
+            <td><?php echo nl2br(htmlspecialchars($message['message'])); ?></td>
+            <td><?php echo htmlspecialchars($message['created_at']); ?></td>
+            <td>
+                <form method="POST" onsubmit="return confirm('Are you sure you want to delete this message?');">
+                    <input type="hidden" name="delete_id" value="<?php echo $message['id']; ?>">
+                    <button type="submit" class="btn-primary" style="background-color: red;">Delete</button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</tbody>
+
             </table>
         <?php else: ?>
             <p>No messages found.</p>
