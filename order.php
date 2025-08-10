@@ -1,22 +1,22 @@
 <?php
-session_start();  // Ensure session is started
+session_start();
 
-if (!isset($_SESSION['email'])) {
-    header("Location: login.php"); // Redirect to login page if not logged in
+// Check if the user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
     exit();
 }
-
-$loggedInEmail = $_SESSION['email']; // Retrieve logged-in user's email
+$loggedInEmail = $_SESSION['user_email'] ?? '';
 ?>
 
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Order - Carrefour Mall</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Order - MasterCraft Woodworks</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Custom styles for order page */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -77,6 +77,10 @@ $loggedInEmail = $_SESSION['email']; // Retrieve logged-in user's email
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        .form-control[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
         button[type="submit"] {
             background-color: #28a745;
             color: white;
@@ -97,25 +101,26 @@ $loggedInEmail = $_SESSION['email']; // Retrieve logged-in user's email
 <body>
     <header>
         <div class="container">
-            <img src="images/logo.jfif" alt="Carpentry Management System Logo" class="logo">
+            <img src="images/logo.jpg" alt="MasterCraft Woodworks Logo" class="logo">
             <div class="header-content">
                 <h1>MasterCraft Woodworks</h1>
             </div>
         </div>
     </header>
     
-    <!-- Navigation Section -->
     <nav>
         <ul>
-            <li><a href="index.php">Home</a></li>
+            <li><a href="home.php">Home</a></li>
             <li><a href="services.html">Services</a></li>
             <li><a href="about.html">About Us</a></li>
             <li><a href="team.html">Team</a></li>
             <li><a href="pricing.html">Pricing</a></li>
             <li><a href="testimonials.html">Testimonials</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="contact.php">Contact</a></li>
             <li><a href="gallery.html">Gallery</a></li>
             <li><a href="order.php">Custom Order</a></li>
+            <li><a href="user_orders.php">Pending Orders</a></li>
+            <li><a href="logout.php">Logout</a></li>
         </ul>
     </nav>
     <div id="page">
@@ -129,6 +134,7 @@ $loggedInEmail = $_SESSION['email']; // Retrieve logged-in user's email
                     <th>Size</th>
                     <th>Description</th>
                     <th>Total</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody id="order-items">
@@ -158,64 +164,107 @@ $loggedInEmail = $_SESSION['email']; // Retrieve logged-in user's email
             <button type="submit" class="btn-primary">Place Order</button>
         </form>
     </div>
+    
+    <footer>
+        <div class="container">
+            <p id ="date"></p>
+        </div>
+    </footer>
+
     <script>
-        function loadOrder() {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (cart.length === 0) {
-                console.log('Cart is empty');
-                return;
-            }
+function loadOrder() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (cart.length === 0) {
+        console.log('Cart is empty');
+        return;
+    }
 
-            let orderItemsTable = document.getElementById('order-items');
-            let total = 0;
+    let orderItemsTable = document.getElementById('order-items');
+    orderItemsTable.innerHTML = '';
+    let total = 0;
 
-            cart.forEach((item, index) => {
-                let itemTotal = item.price * item.quantity;
-                total += itemTotal;
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>$${item.price.toFixed(2)}</td>
-                    <td>${item.quantity}</td>
-                    <td>${item.size || 'N/A'}</td>
-                    <td>${item.description || 'N/A'}</td>
-                    <td>$${itemTotal.toFixed(2)}</td>
-                `;
-                orderItemsTable.appendChild(row);
-            });
+    cart.forEach((item, index) => {
+        let itemTotal = item.price * item.quantity;
+        total += itemTotal;
 
-            document.getElementById('order-total-display').textContent = total.toFixed(2);
+        let row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td>
+                <button onclick="changeQuantity(${index}, -1)">➖</button>
+                ${item.quantity}
+                <button onclick="changeQuantity(${index}, 1)">➕</button>
+            </td>
+            <td>${item.size || 'N/A'}</td>
+            <td>${item.description || 'N/A'}</td>
+            <td>$${itemTotal.toFixed(2)}</td>
+            <td><button onclick="deleteItem(${index})" style="color: red;">🗑</button></td>
+        `;
+        orderItemsTable.appendChild(row);
+    });
+
+    document.getElementById('order-total-display').textContent = total.toFixed(2);
+}
+
+function changeQuantity(index, delta) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart[index].quantity += delta;
+
+    if (cart[index].quantity < 1) {
+        if (!confirm("Quantity is 0. Do you want to remove this item?")) {
+            cart[index].quantity = 1;
+        } else {
+            cart.splice(index, 1);
         }
+    }
 
-        function updateOrderForm() {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            let items = [];
-            let total = 0;
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadOrder();
+}
 
-            cart.forEach(item => {
-                let itemTotal = item.price * item.quantity;
-                items.push({
-                    name: item.name,
-                    price: item.price,
-                    quantity: item.quantity,
-                    size: item.size || 'N/A',
-                    description: item.description || 'N/A',
-                    total: itemTotal
-                });
-                total += itemTotal;
-            });
+function deleteItem(index) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    if (confirm("Are you sure you want to remove this item?")) {
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        loadOrder();
+    }
+}
 
-            let itemsJson = JSON.stringify(items);
-            document.getElementById('order-items-hidden').value = itemsJson;
-            document.getElementById('order-total-hidden').value = total.toFixed(2);
+function updateOrderForm() {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let items = [];
+    let total = 0;
 
-            console.log('Order Items JSON:', itemsJson);
-            console.log('Order Total:', total.toFixed(2));
+    cart.forEach(item => {
+        let itemTotal = item.price * item.quantity;
+        items.push({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size || 'N/A',
+            description: item.description || 'N/A',
+            total: itemTotal
+        });
+        total += itemTotal;
+    });
 
-            return true;  // Ensure the form submits
-        }
+    document.getElementById('order-items-hidden').value = JSON.stringify(items);
+    document.getElementById('order-total-hidden').value = total.toFixed(2);
 
-        document.addEventListener('DOMContentLoaded', loadOrder);
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', loadOrder);
+
+
+
+ const kub = document.getElementById("date");
+      let date = new Date().getFullYear();
+      console.log(date);
+      kub.textContent = ` © ${date} MasterCraft Woodworks. All rights reserved.`;
+      console.log(kub);
     </script>
 </body>
 </html>

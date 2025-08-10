@@ -1,29 +1,24 @@
 <?php
 // Database configuration
 $host = 'localhost';
-$user = 'root';
-$pass = '';
-$dbname = 'CMS';
+$dbname = 'postgres';
+$user = 'postgres';
+$pass = 'kubem';
 
-// Create connection
-$conn = new mysqli($host, $user, $pass, $dbname);
+try {
+    $pdo = new PDO("pgsql:host=$host;dbname=$dbname", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+    // Insert an admin user (hashed password for security)
+    $username = 'kelysemireille@gmail.com';
+    $password = password_hash('doitforothers', PASSWORD_BCRYPT);
 
-// Insert an admin user (hashed password for security)
-$username = 'Alain';
-$password = password_hash('Alain123', PASSWORD_BCRYPT);
+    $sql = "INSERT INTO admin (username, password) VALUES (:username, :password)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([':username' => $username, ':password' => $password]);
 
-$sql = "INSERT INTO admin (username, password) VALUES ('$username', '$password')";
-
-if ($conn->query($sql) === TRUE) {
     echo "Admin user created successfully.";
-} else {
-    echo "Error: " . $conn->error;
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
 }
-
-$conn->close();
 ?>

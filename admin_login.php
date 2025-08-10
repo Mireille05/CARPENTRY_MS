@@ -99,9 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <p class="error"><?= $error ?></p>
     <?php endif; ?>
 
-    <div class="register-link">
-        <p>Don't have an account? <a href="admin_register.html">Register as Admin</a></p>
-    </div>
+   
 </form>
 
 </body>

@@ -1,97 +1,129 @@
 <?php
 session_start();
 
-// Check if user is logged in
-if (!isset($_SESSION['user_id'])) {
-    // If not logged in, redirect to login page
-    header("Location: login.html");
-    exit();
+// Redirect if already logged in
+if (isset($_SESSION['user_id'])) {
+    header("Location: home.php");
+    exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carpentry Management System</title>
+    <title>Login - MasterCraft Woodworks</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F5F5F5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            color: #555555;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2E7D32;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #D84315;
+        }
+        .links {
+            margin-top: 15px;
+        }
+        .links a {
+            color: #2E7D32;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .links a:hover {
+            color: #D84315;
+            text-decoration: underline;
+        }
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            background-color: #333333;
+            color: black;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <!-- Header Section -->
-    <header>
-        <div class="container">
-            <img src="logo.jpg" alt="Carpentry Management System Logo" class="logo">
-            <div class="header-content">
-                <h1>MasterCraft Woodworks</h1>
-               
+    <div class="container">
+        <img src="images/logo.jpg" alt="MasterCraft Woodworks Logo" class="logo">
+        <h2>Login</h2>
+        <form method="POST" action="login.php">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
             </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div class="links">
+            <p>Don't have an account? <a href="register.php">Register here</a></p>
+            <p><a href="admin_login.php">Admin Login</a></p>
         </div>
-    </header>
-    
-    <!-- Navigation Section -->
-    <nav>
-        <ul>
-            <li><a href="index.php">Home</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="team.html">Team</a></li>
-            <li><a href="pricing.html">Pricing</a></li>
-            <li><a href="testimonials.html">Testimonials</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="order.php">Custom Order</a></li>
-            <li><a href="user_orders.php">Pending Order</a></li>
-            <li><a href="logout.php">logout</a></li>
-
-        </ul>
-    </nav>
-
-    <!-- Introduction Section -->
-   <!-- Introduction Section -->
-<section id="introduction">
-    <div class="container">
-        <h2>Introduction</h2>
-        <p>Welcome to MasterCraft Woodworks, your premier destination for exceptional carpentry and custom woodwork solutions. With years of experience and a passion for precision, we specialize in creating beautifully crafted furniture, cabinetry, and home renovations that reflect your unique style and vision. Our skilled artisans bring creativity, attention to detail, and a commitment to excellence to every project, ensuring that each piece is not just a product but a work of art. Whether you're looking to transform your living space, enhance your outdoor area, or add bespoke elements to your home, MasterCraft Woodworks is here to turn your dreams into reality. Experience the perfect blend of functionality and aesthetic appeal with our tailored carpentry services, where quality craftsmanship meets unparalleled customer service.</p>
     </div>
-</section>
-
-
-   <!-- Services Overview Section -->
-<section id="services-overview">
-    <div class="container">
-        <h2>Comprehensive Carpentry Solutions</h2>
-        <p>At MasterCraft Woodworks, we provide an extensive array of carpentry services designed to meet all your needs. Whether you're looking for bespoke furniture, elegant cabinetry, or full-scale home renovations, our expert team is here to deliver. Each service is tailored to your specific requirements, ensuring a perfect blend of functionality and aesthetic appeal.</p>
-        <a href="services.html" class="btn">Discover Our Services</a>
-    </div>
-</section>
-
-   
-
-   <!-- Team Introduction Section -->
-<section id="team">
-    <div class="container">
-        <h2>Our Expert Craftsmen</h2>
-        <p>At MasterCraft Woodworks, our team is the heart of what we do. Each member of our team is a master of their craft, bringing a unique set of skills and a dedication to excellence. From custom furniture to intricate cabinetry, our experienced artisans work collaboratively to ensure every project is executed with precision and care. We pride ourselves on our ability to transform your vision into reality, with a commitment to quality that is unmatched in the industry.</p>
-        <a href="team.html" class="btn">Get to Know Us</a>
-    </div>
-</section>
-
-  
-
-   
     <footer>
         <div class="container">
-            <p id= "date"></p>
+            <p id ="date"></p>
         </div>
     </footer>
-
     <script>
-        const date = new Date().getFullYear();
-      const el = document.getElementById("date");
-      console.log(el);
-
-      el.textContent = `© ${date} Carpentry Management System. All rights reserved.`;
+       const kub = document.getElementById("date");
+      let date = new Date().getFullYear();
+      console.log(date);
+      kub.textContent = ` © ${date} MasterCraft Woodworks. All rights reserved.`;
+      console.log(kub);
     </script>
 </body>
 </html>
-

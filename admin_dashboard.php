@@ -62,7 +62,7 @@ session_start();
 
         <a href="admin_orders.php">Orders Received</a>
         <a href="view_messages.php">Messages</a>
-        <a href="generate_pdf.php">Generate PDF</a>
+        <a href="generate_orders_summary.php">Generate PDF</a>
         <a href="admin_logout.php" class="logout-btn">Logout</a>
     </div>
 </body>
