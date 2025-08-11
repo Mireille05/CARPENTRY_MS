@@ -207,14 +207,14 @@ if (!isset($_SESSION['user_id'])) {
           <div
             class="grid-item"
             data-name="Elegant Bathroom Cabinet"
-            data-cost="600"
+            data-cost="800"
           >
             <img
               src="images/Elegant Bathroom Cabinet.jpeg"
               alt="Elegant Bathroom Cabinet"
             />
             <h3>Elegant Bathroom Cabinet</h3>
-            <p>Price: $600</p>
+            <p>Price: $800</p>
             <a href="#" onclick="addToOrder(this)">Add to Order</a>
           </div>
           <div
