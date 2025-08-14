@@ -14,7 +14,7 @@ $loggedInEmail = $_SESSION['user_email'] ?? '';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Custom Order - MasterCraft Woodworks</title>
+    <title>Customer Order - MasterCraft Woodworks</title>
     <link rel="stylesheet" href="styles.css">
     <style>
         body {
