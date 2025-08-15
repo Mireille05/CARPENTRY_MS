@@ -64,7 +64,7 @@ if (!isset($_SESSION['user_id'])) {
     <section id="team">
         <div class="container">
             <h2>Our Expert Craftsmen</h2>
-            <p>At MasterCraft Woodworks, our team is the heart of what we do. Each member of our team is a master of their craft, bringing a unique set of skills and a dedication to excellence. From custom furniture to intricate cabinetry, our experienced artisans work collaboratively to ensure every project is executed with precision and care. We pride ourselves on our ability to transform your vision into reality, with a commitment to quality that is unmatched in the industry.</p>
+            <p>At MasterCraft Woodworks, our team is the heart of what we do. Each member of our team is a master of their crafts, bringing a unique set of skills and a dedication to excellence. From custom furniture to intricate cabinetry, our experienced artisans work collaboratively to ensure every project is executed with precision and care. We pride ourselves on our ability to transform your vision into reality, with a commitment to quality that is unmatched in the industry.</p>
             <a href="team.html" class="btn">Get to Know Us</a>
         </div>
     </section>
